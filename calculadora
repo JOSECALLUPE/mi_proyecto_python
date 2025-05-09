@@ -1,3 +1,8 @@
+from decimal import Decimal, getcontext
+
+# Establece precisión decimal alta (NASA-friendly)
+getcontext().prec = 15
+
 def suma(a, b):
     return a + b
 
@@ -8,34 +13,41 @@ def multiplicacion(a, b):
     return a * b
 
 def division(a, b):
-    if b == 0:
-        return "Error: división por cero"
-    return a / b
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "ERROR: División por cero"
+
+def obtener_numero(prompt):
+    while True:
+        entrada = input(prompt)
+        try:
+            return Decimal(entrada)
+        except:
+            print("Entrada no válida. Intenta con un número decimal.")
 
 def calculadora():
-    print("Calculadora simple en Python")
-    print("Operaciones disponibles: +, -, *, /")
+    print("=== CALCULADORA DE PRECISIÓN (NASA) ===")
+    print("Operaciones disponibles: +  -  *  /")
     
-    try:
-        num1 = float(input("Ingresa el primer número: "))
-        operacion = input("Ingresa la operación (+, -, *, /): ")
-        num2 = float(input("Ingresa el segundo número: "))
-        
-        if operacion == "+":
-            resultado = suma(num1, num2)
-        elif operacion == "-":
-            resultado = resta(num1, num2)
-        elif operacion == "*":
-            resultado = multiplicacion(num1, num2)
-        elif operacion == "/":
-            resultado = division(num1, num2)
-        else:
-            resultado = "Operación no válida"
-        
-        print("Resultado:", resultado)
-    
-    except ValueError:
-        print("Error: ingresa solo números válidos.")
+    num1 = obtener_numero("Ingrese el primer número: ")
+    operacion = input("Ingrese la operación (+, -, *, /): ").strip()
+    num2 = obtener_numero("Ingrese el segundo número: ")
 
-# Ejecutar la calculadora
-calculadora()
+    operaciones = {
+        '+': suma,
+        '-': resta,
+        '*': multiplicacion,
+        '/': division
+    }
+
+    funcion = operaciones.get(operacion)
+
+    if funcion:
+        resultado = funcion(num1, num2)
+        print(f"Resultado: {resultado}")
+    else:
+        print("ERROR: Operación no reconocida.")
+
+if __name__ == "__main__":
+    calculadora()
